@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Gallery | Explore Uganda</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="style.css">
+  <!-- External JS -->
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Explore Uganda</h1>
+    <nav>
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="gallery.html" aria-current="page">Gallery</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="testimonials.html">Testimonials</a></li>
+        <li><a href="events.html">Events & Festivals</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Discover Uganda in Pictures</h2>
+    <div class="gallery-grid">
+      <!-- Example images -->
+      <img src="images/gorilla.jpg" alt="Gorilla Trekking" class="gallery-item">
+      <img src="images/festival.jpg" alt="Cultural Festival" class="gallery-item">
+      <img src="images/lake.jpg" alt="Lake Victoria" class="gallery-item">
+      <img src="images/mountains.jpg" alt="Rwenzori Mountains" class="gallery-item">
+      <img src="images/market.jpg" alt="Local Market" class="gallery-item">
+      <img src="images/safari.jpg" alt="Safari Adventure" class="gallery-item">
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox">
+      <span class="close">&times;</span>
+      <img class="lightbox-content" id="lightbox-img" alt="">
+      <div class="caption" id="lightbox-caption"></div>
+      <div class="controls">
+        <button id="prev">&#10094; Prev</button>
+        <button id="next">Next &#10095;</button>
+        <button id="play">Play</button>
+        <button id="pause">Pause</button>
+      </div>
+      <div id="progress-bar"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Explore Uganda. All rights reserved.</p>
+  </footer>
+</body>
+</html>
