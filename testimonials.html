@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Testimonials | Explore Uganda</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="style.css">
+  <!-- External JS -->
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Explore Uganda</h1>
+    <nav>
+      <ul>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="testimonials.html" aria-current="page">Testimonials</a></li>
+        <li><a href="events.html">Events & Festivals</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="testimonials-list">
+      <h2>What Travelers Say</h2>
+      <article>
+        <h3>“Unforgettable Adventure” — Maria, Spain</h3>
+        <p>The gorilla trekking was life-changing, and our guides were knowledgeable and kind.</p>
+      </article>
+      <article>
+        <h3>“Warm Hospitality” — David, USA</h3>
+        <p>From the food to the music, every moment felt welcoming and authentic.</p>
+      </article>
+      <article>
+        <h3>“Breathtaking Landscapes” — Aisha, Kenya</h3>
+        <p>Sunrises over the lake and hikes through lush forests—pure magic.</p>
+      </article>
+    </section>
+
+    <section class="testimonial-form">
+      <h2>Share Your Experience</h2>
+      <form id="testimonialForm" action="#" method="post">
+        <label for="traveler-name">Name</label>
+        <input id="traveler-name" name="traveler-name" type="text" required>
+
+        <label for="country">Country</label>
+        <input id="country" name="country" type="text">
+
+        <label for="review">Your Story</label>
+        <textarea id="review" name="review" rows="5" required></textarea>
+
+        <button type="submit">Submit Testimonial</button>
+      </form>
+      <p id="testimonialMessage"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Explore Uganda. All rights reserved.</p>
+  </footer>
+</body>
+</html>
