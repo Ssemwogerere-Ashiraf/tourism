@@ -1,0 +1,405 @@
+/* ===========================
+   Global Reset & Base Styles
+   =========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #fff;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===========================
+   Header & Navigation
+   =========================== */
+header {
+  background: #4caf50;
+  color: #fff;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+header h1 {
+  font-size: 1.5rem;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a:hover,
+nav a[aria-current="page"] {
+  text-decoration: underline;
+}
+
+/* ===========================
+   Main Content
+   =========================== */
+main {
+  flex: 1;
+  padding: 2rem;
+}
+
+h2 {
+  margin-bottom: 1rem;
+  color: #4caf50;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+/* ===========================
+   Buttons
+   =========================== */
+.btn,
+button {
+  background: #4caf50;
+  color: #fff;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn:hover,
+button:hover {
+  background: #45a049;
+}
+
+/* ===========================
+   Hero Section
+   =========================== */
+.hero {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: linear-gradient(to right, #4caf50, #81c784);
+  color: #fff;
+  border-radius: 5px;
+}
+
+.hero h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* ===========================
+   Cards / Highlights
+   =========================== */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.cards article {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+/* ===========================
+   Gallery
+   =========================== */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.gallery-item {
+  width: 100%;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+}
+
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  padding-top: 60px;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.9);
+}
+
+.lightbox-content {
+  margin: auto;
+  display: block;
+  max-width: 80%;
+  max-height: 80%;
+}
+
+.caption {
+  text-align: center;
+  color: #fff;
+  margin-top: 10px;
+}
+
+.controls {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.controls button {
+  margin: 0 5px;
+  padding: 5px 10px;
+}
+
+#progress-bar {
+  width: 0;
+  height: 5px;
+  background: #4caf50;
+  margin-top: 10px;
+  transition: width 0.5s ease;
+}
+
+/* ===========================
+   Forms (Contact & Testimonials)
+   =========================== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+}
+
+input, textarea {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+label {
+  font-weight: bold;
+}
+
+#formMessage,
+#testimonialMessage,
+#eventMessage {
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+/* ===========================
+   Testimonials
+   =========================== */
+.testimonials-list article {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-left: 4px solid #4caf50;
+  background: #f9f9f9;
+  border-radius: 5px;
+}
+
+/* ===========================
+   Blog
+   =========================== */
+.blog-list article {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.blog-list h3 a {
+  color: #4caf50;
+  text-decoration: none;
+}
+
+.blog-list h3 a:hover {
+  text-decoration: underline;
+}
+
+/* ===========================
+   Events
+   =========================== */
+.events-list article {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #f9f9f9;
+}
+
+.events-list h3 {
+  margin-top: 0;
+  color: #4caf50;
+}
+
+.events-cta {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+/* ===========================
+   Admin Panel
+   =========================== */
+.timer {
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  display: inline-block;
+  margin-left: 1rem;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.timer.green {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.timer.yellow {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.timer.red {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.admin-events form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+  margin-bottom: 2rem;
+}
+
+#adminEventsList article {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #f9f9f9;
+}
+
+/* ===========================
+   Footer
+   =========================== */
+footer {
+  background: #333;
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* ===========================
+   Responsive Design
+   =========================== */
+
+/* Small devices (phones, up to 600px) */
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav ul {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  nav a {
+    display: block;
+    padding: 0.5rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 5px;
+  }
+
+  .hero {
+    padding: 2rem 1rem;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  form {
+    width: 100%;
+  }
+
+  input, textarea {
+    font-size: 1rem;
+  }
+
+  .controls button {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .timer {
+    margin-top: 1rem;
+    margin-left: 0;
+  }
+
+  #extendBtn, #logoutBtn {
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+}
+
+/* Medium devices (tablets, 601px–900px) */
+@media (max-width: 900px) {
+  nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .admin-events form {
+    max-width: 100%;
+  }
+}
+
+/* Large devices (desktops, 901px and up) */
+@media (min-width: 901px) {
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
