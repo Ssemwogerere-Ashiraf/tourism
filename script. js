@@ -1,0 +1,391 @@
+/* ===========================
+   Config
+   =========================== */
+const GAS_URL = "YOUR_DEPLOYED_WEB_APP_URL"; // TODO: replace with your Apps Script Web App URL
+
+/* ===========================
+   Admin route protection
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const isAdminPage = window.location.pathname.endsWith("admin.html");
+  if (isAdminPage && sessionStorage.getItem("isAdmin") !== "true") {
+    window.location.href = "login.html";
+  }
+});
+
+/* ===========================
+   Login flow: send + verify code
+   Expected DOM (login.html):
+   - form#email-login-form with input#admin-email
+   - form#code-form with input#confirmation-code (initially display:none)
+   - p#login-message for feedback
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const emailForm = document.getElementById("email-login-form");
+  const codeForm = document.getElementById("code-form");
+  const message = document.getElementById("login-message");
+
+  let userEmail = sessionStorage.getItem("adminEmail") || "";
+
+  if (emailForm) {
+    emailForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const emailInput = document.getElementById("admin-email");
+      userEmail = (emailInput?.value || "").trim();
+
+      if (!userEmail) {
+        if (message) message.textContent = "Please enter your email.";
+        return;
+      }
+
+      try {
+        const res = await fetch(GAS_URL, {
+          method: "POST",
+          body: new URLSearchParams({ action: "sendCode", email: userEmail })
+        });
+        const text = await res.text();
+        if (message) message.textContent = "A confirmation code has been sent to your email.";
+        sessionStorage.setItem("adminEmail", userEmail);
+        emailForm.style.display = "none";
+        if (codeForm) codeForm.style.display = "block";
+      } catch {
+        if (message) message.textContent = "Failed to send code. Please try again.";
+      }
+    });
+  }
+
+  if (codeForm) {
+    codeForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const codeInput = document.getElementById("confirmation-code");
+      const code = (codeInput?.value || "").trim();
+      userEmail = sessionStorage.getItem("adminEmail") || userEmail;
+
+      if (!code || !userEmail) {
+        if (message) message.textContent = "Enter the code sent to your email.";
+        return;
+      }
+
+      try {
+        const res = await fetch(GAS_URL, {
+          method: "POST",
+          body: new URLSearchParams({ action: "verifyCode", email: userEmail, code })
+        });
+        const result = await res.text();
+        if (result === "success") {
+          sessionStorage.setItem("isAdmin", "true");
+          window.location.href = "admin.html";
+        } else {
+          if (message) message.textContent = "Invalid or expired code. Please try again.";
+        }
+      } catch {
+        if (message) message.textContent = "Verification failed. Try again.";
+      }
+    });
+  }
+});
+
+/* ===========================
+   Gallery: lightbox + slideshow + keyboard
+   Expected DOM (gallery.html):
+   - .gallery-item images
+   - #lightbox with .close, #lightbox-img, #lightbox-caption
+   - #prev #next #play #pause, #progress-bar
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const galleryItems = document.querySelectorAll(".gallery-item");
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightbox-img");
+  const caption = document.getElementById("lightbox-caption");
+  const closeBtn = document.querySelector(".close");
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
+  const playBtn = document.getElementById("play");
+  const pauseBtn = document.getElementById("pause");
+  const progressBar = document.getElementById("progress-bar");
+
+  if (!galleryItems.length || !lightbox) return;
+
+  let currentIndex = 0;
+  let slideshowInterval = null;
+
+  function showImage(index) {
+    const item = galleryItems[index];
+    lightbox.style.display = "block";
+    lightboxImg.src = item.src;
+    caption.textContent = item.alt || "";
+    currentIndex = index;
+  }
+
+  galleryItems.forEach((item, index) => item.addEventListener("click", () => showImage(index)));
+
+  closeBtn?.addEventListener("click", () => {
+    lightbox.style.display = "none";
+    clearInterval(slideshowInterval);
+    slideshowInterval = null;
+    progressBar && (progressBar.style.width = "0");
+  });
+
+  prevBtn?.addEventListener("click", () => {
+    currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+    showImage(currentIndex);
+  });
+
+  nextBtn?.addEventListener("click", () => {
+    currentIndex = (currentIndex + 1) % galleryItems.length;
+    showImage(currentIndex);
+  });
+
+  playBtn?.addEventListener("click", () => {
+    if (slideshowInterval) return;
+    slideshowInterval = setInterval(() => {
+      nextBtn?.click();
+      if (progressBar) {
+        const pct = ((currentIndex + 1) / galleryItems.length) * 100;
+        progressBar.style.width = pct + "%";
+      }
+    }, 3000);
+  });
+
+  pauseBtn?.addEventListener("click", () => {
+    clearInterval(slideshowInterval);
+    slideshowInterval = null;
+    progressBar && (progressBar.style.width = "0");
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (lightbox.style.display === "block") {
+      if (e.key === "ArrowLeft") prevBtn?.click();
+      if (e.key === "ArrowRight") nextBtn?.click();
+      if (e.key === "Escape") closeBtn?.click();
+    }
+  });
+});
+
+/* ===========================
+   Contact form validation
+   Expected DOM (contact.html):
+   - form#contactForm and #formMessage
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const contactForm = document.getElementById("contactForm");
+  const formMessage = document.getElementById("formMessage");
+
+  if (!contactForm) return;
+
+  contactForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("name")?.value.trim();
+    const email = document.getElementById("email")?.value.trim();
+    const subject = document.getElementById("subject")?.value.trim();
+    const message = document.getElementById("message")?.value.trim();
+
+    if (!name || !email || !subject || !message) {
+      if (formMessage) {
+        formMessage.textContent = "Please fill in all fields.";
+        formMessage.style.color = "red";
+      }
+      return;
+    }
+
+    console.log("Contact form submitted:", { name, email, subject, message });
+    if (formMessage) {
+      formMessage.textContent = "Thank you for contacting us! We’ll reply soon.";
+      formMessage.style.color = "green";
+    }
+    contactForm.reset();
+  });
+});
+
+/* ===========================
+   Testimonials submission
+   Expected DOM (testimonials.html):
+   - form#testimonialForm and #testimonialMessage
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const testimonialForm = document.getElementById("testimonialForm");
+  const testimonialMessage = document.getElementById("testimonialMessage");
+
+  if (!testimonialForm) return;
+
+  testimonialForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("traveler-name")?.value.trim();
+    const country = document.getElementById("country")?.value.trim();
+    const review = document.getElementById("review")?.value.trim();
+
+    if (!name || !review) {
+      if (testimonialMessage) {
+        testimonialMessage.textContent = "Please fill in all required fields.";
+        testimonialMessage.style.color = "red";
+      }
+      return;
+    }
+
+    console.log("New testimonial submitted:", { name, country, review });
+    if (testimonialMessage) {
+      testimonialMessage.textContent = "Thank you for sharing your story!";
+      testimonialMessage.style.color = "green";
+    }
+    testimonialForm.reset();
+  });
+});
+
+/* ===========================
+   Events dynamic loading (public page)
+   Expected DOM (events.html):
+   - #eventsList
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const eventsList = document.getElementById("eventsList");
+  if (!eventsList) return;
+
+  const events = [
+    { title: "Kampala Street Festival", date: "2025-12-05", location: "Kampala", description: "A vibrant celebration of music, dance, and street food in the heart of the capital." },
+    { title: "Nyege Nyege Festival", date: "2026-02-10", location: "Jinja", description: "East Africa’s biggest music and arts festival, featuring performers from around the world." },
+    { title: "Imbalu Circumcision Ceremony", date: "2026-07-20", location: "Mbale", description: "A traditional cultural rite of passage celebrated with dance, drumming, and community gatherings." }
+  ];
+
+  eventsList.innerHTML = events.map(ev => `
+    <article>
+      <h3>${ev.title}</h3>
+      <p><time datetime="${ev.date}">${new Date(ev.date).toDateString()}</time> • ${ev.location}</p>
+      <p>${ev.description}</p>
+    </article>
+  `).join("");
+});
+
+/* ===========================
+   Admin panel: session + extend + event management
+   Expected DOM (admin.html):
+   - #logoutBtn, #extendBtn, #session-timer.timer
+   - form#eventForm with #event-title, #event-date, #event-location, #event-description
+   - #eventMessage
+   - #adminEventsList
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const isAdminPage = window.location.pathname.endsWith("admin.html");
+  if (!isAdminPage) return;
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  const extendBtn = document.getElementById("extendBtn");
+  const timerDisplay = document.getElementById("session-timer");
+  const eventForm = document.getElementById("eventForm");
+  const eventMessage = document.getElementById("eventMessage");
+  const adminEventsList = document.getElementById("adminEventsList");
+
+  let remaining = 300; // seconds
+  let timeout = null;
+  let countdown = null;
+  const userEmail = sessionStorage.getItem("adminEmail") || "";
+
+  function applyTimerColor() {
+    if (!timerDisplay) return;
+    timerDisplay.classList.remove("green", "yellow", "red");
+    if (remaining > 180) timerDisplay.classList.add("green");
+    else if (remaining > 60) timerDisplay.classList.add("yellow");
+    else timerDisplay.classList.add("red");
+  }
+
+  function renderTimer() {
+    if (!timerDisplay) return;
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+    timerDisplay.textContent = `Session expires in ${minutes}:${seconds.toString().padStart(2, "0")}`;
+    applyTimerColor();
+  }
+
+  function expireSession() {
+    sessionStorage.removeItem("isAdmin");
+    alert("Session expired after 5 minutes of inactivity.");
+    window.location.href = "login.html";
+  }
+
+  function startCountdown() {
+    clearTimeout(timeout);
+    clearInterval(countdown);
+    remaining = 300;
+    timeout = setTimeout(expireSession, remaining * 1000);
+    renderTimer();
+    countdown = setInterval(() => {
+      remaining--;
+      if (remaining >= 0) {
+        renderTimer();
+      } else {
+        clearInterval(countdown);
+      }
+    }, 1000);
+  }
+
+  // Auto reset on activity
+  ["click", "keypress", "mousemove", "scroll"].forEach(evt =>
+    document.addEventListener(evt, startCountdown)
+  );
+
+  // Logout
+  logoutBtn?.addEventListener("click", () => {
+    sessionStorage.removeItem("isAdmin");
+    window.location.href = "login.html";
+  });
+
+  // Extend session (server-validated)
+  extendBtn?.addEventListener("click", async () => {
+    if (!userEmail) {
+      alert("No email found. Please log in again.");
+      window.location.href = "login.html";
+      return;
+    }
+    try {
+      const res = await fetch(GAS_URL, {
+        method: "POST",
+        body: new URLSearchParams({ action: "extendSession", email: userEmail })
+      });
+      const text = await res.text();
+      if (text === "extended") {
+        startCountdown();
+        alert("Session extended by 5 minutes (validated server-side).");
+      } else {
+        alert("Failed to extend session. Please log in again.");
+        window.location.href = "login.html";
+      }
+    } catch {
+      alert("Network error while extending session. Please try again.");
+    }
+  });
+
+  // Event management (local demo; replace with backend later)
+  eventForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = document.getElementById("event-title")?.value.trim();
+    const date = document.getElementById("event-date")?.value;
+    const location = document.getElementById("event-location")?.value.trim();
+    const description = document.getElementById("event-description")?.value.trim();
+
+    if (!title || !date || !location || !description) {
+      if (eventMessage) {
+        eventMessage.textContent = "Please fill in all fields.";
+        eventMessage.style.color = "red";
+      }
+      return;
+    }
+
+    const article = document.createElement("article");
+    article.innerHTML = `
+      <h3>${title}</h3>
+      <p><time datetime="${date}">${new Date(date).toDateString()}</time> • ${location}</p>
+      <p>${description}</p>
+    `;
+    adminEventsList?.appendChild(article);
+
+    if (eventMessage) {
+      eventMessage.textContent = "Event added successfully!";
+      eventMessage.style.color = "green";
+    }
+    eventForm.reset();
+  });
+
+  // Initialize countdown on load
+  startCountdown();
+});
